@@ -133,81 +133,112 @@ class SinglyLinkedList {
         }
         return this.recursiveMax(runner.next, maxNode);
     }
-    
-    /**
-     * Retrieves the data of the second to last node in this list.
-     * - Time: O(?).
-     * - Space: O(?).
-     * @returns {any} The data of the second to last node or null if there is no
-     *    second to last node.
-     */
+
     secondToLast() {
-        if(this.isEmpty()) {
+        if(this.isEmpty() || this.head.next == null) {
             return null;
         }
         let runner = this.head;
-        if (runner.next == null) {
-            return null;
-        }
-        while (runner.next.next) {
+
+        while(runner.next.next) {
             runner = runner.next;
         }
         return runner.data;
     }
-
-    /**
-     * Removes the node that has the matching given val as it's data.
-     * - Time: O(?).
-     * - Space: O(?).
-     * @param {any} val The value to compare to the node's data to find the
-     *    node to be removed.
-     * @returns {boolean} Indicates if a node was removed or not.
-     */
     removeVal(val) {
-        let runner = this.head;
-        let lagged = null;
-        while (runner) {
-            if (runner.data == val) {
-                if (lagged == null) {
-                    let head = this.head;
-                    this.head = this.head.next;
-                    head.next = null;
-                    return true;
-                }
-                lagged.next = runner.next;
+        if(this.isEmpty()) {
+            return false;
+        }
+        else if(this.head.data === val) {
+            this.removeHead();
+            return true;
+        }
+
+        let walker = this.head;
+        let runner = walker.next;
+
+        while(runner) {
+            if(runner.data === val) {
+                walker.next = runner.next;
                 runner.next = null;
                 return true;
             }
-            lagged = runner;
-            runner= runner.next;
+            walker = runner;
+            runner = runner.next;
         }
+
         return false;
-        // while (runner.next) {
-        //     if (runner.data == val) {
-        //         runner == runner.next;
-        //         runner.next = null;
-        //         return true;
-        //     }
-        //     runner = runner.next;
-        // }
-        // return false;
     }
+
+    prepend(newVal, targetVal) {
+        if(this.isEmpty()) {
+            return false;
+        } else if(this.head.data === targetVal) {
+            this.insertAtFront(newVal);
+            return true;
+        }
+
+        let walker = null;
+        let runner = this.head;
+
+        while(runner) {
+            if(runner.data === targetVal){
+                const newNode = new Node(newVal);
+                newNode.next = runner;
+                walker.next = newNode;
+                return true;
+            }
+            walker = runner;
+            runner = runner.next;
+        }
+
+        return false;
+    }
+    
+    /**
+     * Concatenates the nodes of a given list onto the back of this list.
+     * - Time: O(?).
+     * - Space: O(?).
+     * @param {SinglyLinkedList} addList An instance of a different list whose
+     *    whose nodes will be added to the back of this list.
+     * @returns {SinglyLinkedList} This list with the added nodes.
+     */
+    concat(addList) {
+        if(this.isEmpty()) {
+            this.head = addList.head;
+        }
+        let runner = this.head;
+        while(runner.next) {
+            runner = runner.next;
+        }
+        runner.next = addList.head;
+    }
+
+    /**
+     * Finds the node with the smallest number as data and moves it to the front
+     * of this list.
+     * - Time: O(?).
+     * - Space: O(?).
+     * @returns {SinglyLinkedList} This list.
+     */
+    moveMinToFront() {}
 
     // EXTRA
     /**
-     * Inserts a new node before a node that has the given value as its data.
+     * Splits this list into two lists where the 2nd list starts with the node
+     * that has the given value.
+     * splitOnVal(5) for the list (1=>3=>5=>2=>4) will change list to (1=>3)
+     * and the return value will be a new list containing (5=>2=>4)
      * - Time: O(?).
      * - Space: O(?).
-     * @param {any} newVal The value to use for the new node that is being added.
-     * @param {any} targetVal The value to use to find the node that the newVal
-     *    should be inserted in front of.
-     * @returns {boolean} To indicate whether the node was pre-pended or not.
+     * @param {any} val The value in the node that the list should be split on.
+     * @returns {SinglyLinkedList} The split list containing the nodes that are
+     *    no longer in this list.
      */
-    prepend(newVal, targetVal) {}
-
+    splitOnVal(val) {}
 }
-sll = new SinglyLinkedList();
-sll.seedFromArr([1, 2, 3, 4, 7]);
-console.log(sll.secondToLast());
-console.log(sll.removeVal(4));
-console.log(sll.secondToLast());
+sll = new SinglyLinkedList().seedFromArr([1, 2, 3, 4, 5]);
+sll2 = new SinglyLinkedList().seedFromArr([6, 7, 8, 9, 10]);
+console.log(sll.toArr());
+sll.concat(sll2);
+console.log(sll.toArr());
